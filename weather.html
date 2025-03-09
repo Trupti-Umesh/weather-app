@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Weather App</title>
+    <style>
+        body {
+            background: #FFFFFF; /* white */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+            position: relative;
+        }
+        #welcome-text {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #217dbb;     /*dark blue */
+            font-size: 28px; 
+            font-weight: bold;
+        }
+        #weather-container {
+            background: skyblue;
+            padding: 20px;
+            border-radius: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        input, button {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+        input {
+            width: calc(100% - 22px);
+        }
+        button {
+            background: #217dbb;
+            color: white;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        #weather-icon {
+            width: 150px;
+            height: 150px;
+            display: none;
+            margin: 10px auto;
+        }
+        #temp {
+            font-size: 50px;
+            font-weight: bold;
+            color: #333;
+        }
+        #city-name, #description {
+            font-size: 18px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div id="welcome-text">Welcome to my weather application!!</div>
+
+    <div id="weather-container">
+        <h2>Weather App</h2>
+        <input type="text" id="city" placeholder="Enter city">
+        <button onclick="getWeather()">Search</button>
+        
+        <div id="weather-output">
+            <img id="weather-icon" alt="Weather Icon">
+            <p id="temp"></p>
+            <p id="city-name"></p>
+            <p id="description"></p>
+        </div>
+    </div>
+
+    <script>
+        function getWeather() {
+            const apiKey = 'e69943714013e94c7b9d733c72bb698a';
+            const city = document.getElementById('city').value;
+
+            if (!city) {
+                alert('Please enter a city');
+                return;
+            }
+
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.cod === 200) {
+                        document.getElementById('temp').innerText = `${Math.round(data.main.temp)}°C`;
+                        document.getElementById('city-name').innerText = data.name;
+                        document.getElementById('description').innerText = data.weather[0].description;
+
+                        // Set weather icon
+                        const iconCode = data.weather[0].icon;
+                        const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+                        const weatherIcon = document.getElementById('weather-icon');
+                        weatherIcon.src = iconUrl;
+                        weatherIcon.style.display = "block"; // Show the icon
+                    } else {
+                        alert('City not found. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching weather data:', error);
+                    alert('Error fetching weather data. Please try again.');
+                });
+        }
+    </script>
+</body>
+</html>
